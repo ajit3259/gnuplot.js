@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<title>GNUPlot Port!</title>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<!--embed src="output.svg" type="image/svg+xml"  width="600" height="400"-->
+		<div style="padding-left: 40px; padding-right: 40px;">
+			<h2><b><u>Port of GNUPlot</u></b></h2>
+			<br>
+	        <textarea class="form-control" id="cmd" rows="10">#DO NOT DELETE THE FIRST LINE, CONTINUE WRITING YOUR CODE AFTER IT
+set terminal svg
+#WRITE CODE FROM HERE ONWARDS
+</textarea>
+	        <br>
+	        <button class="btn btn-info" onclick="generateOp()">Generate Graph!</button>
+	        <button class="btn btn-info" onclick="deleteEverything(); window.location.reload(true)">Refresh Everything</button><br><br>
+            <input type="file" id="files" name="files[]" multiple />
+		</div>
+		<br>
+		<p id="image" align="center"></p>
+	</body>
+	<script src="gnuplotasm.js"></script>
+	<script>
+		var file_names = []
+		function generateOp(){
+			///THIS IS FOR FILE HANDLING
+			//console.log(file_names)
+            for (var key in file_names)
+            	if(FS.findObject(key))
+                	console.log("Found locally stored file: " + key);
+
+            // THESE ARE TO ACTUALLY GENERATE THE GRAPHS
+			var text = document.getElementById("cmd").value;
+			//console.log(text);
+			outstr = "";
+			var file = FS.createDataFile("/","input",text,true,true,true);
+			Module.callMain(['input']);
+			outstr += "</svg>";
+			//console.log(outstr);
+			var para = document.getElementById("image");
+			para.innerHTML = outstr;
+            FS.unlink("input");
+		}
+
+		function FileHandler(evt){
+			var files_meta = evt.target.files; // Metadata of Files
+
+            // files is a FileList of File objects. List some properties.
+            var output = [];
+            for (var i=0,f;f = files_meta[i];i++) {
+            	//THIS IS THE FILE READER WHICH STORES THE DATA
+                var reader = new FileReader();
+                var fname = f.name;
+                reader.onloadend = function(e) {
+                    if (e.target.result) {
+                        console.log(fname + ": Read success - storing in browser. " + e.target.result.length);
+                        file_names.push(fname);
+                        FS.createDataFile("/",fname,e.target.result,true,true,true);
+                    }
+                };
+                reader.readAsText(f);
+            }
+		}
+
+		function deleteEverything(){
+			for(var i=0,f;f = file_names[i];i++){
+				FS.unlink(f);
+			}
+			file_names = [];
+		}
+
+		//THIS WILL ENSURE EVERY TIME A DOCUMENT IS ADDED, IT IS UPDATED TO THE LIST OF FILES
+		document.getElementById('files').addEventListener('change', FileHandler, false);
+	</script>
+</html>
