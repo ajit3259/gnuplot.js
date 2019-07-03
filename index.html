@@ -37,7 +37,7 @@ set terminal svg
 		<p id="image" align="center"></p>
 		<div style="text-align: center"><button id="download" style="display: none;" class ="btn btn-danger">Download</button></div>
 	</body>
-	<script src="gnuplotasm.js"></script>
+	<script src="gnuplot.js"></script>
 		<script>
 			function generateOp(){
 				var text = document.getElementById("cmd").value;
@@ -52,6 +52,7 @@ set terminal svg
 				document.getElementById("download").style = "block";
                 FS.unlink("input");
 			}
+
 			var reset = document.getElementById("reset");
 			reset.addEventListener("click", function(){
 				deletefiles();
@@ -73,22 +74,27 @@ set terminal svg
 			    }
 			    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
 
+			    
 			    for(var i =0,f;f = files[i];i++)
 			    {
 			    var reader = new FileReader();
-			    var fname = f.name;
-			    reader.onloadend = function(e) {
+			    reader.readAsText(f);
+
+			    reader.onload = (function(theFile){
+			    	return function(e) {
                                 if (e.target.result) {
-                                    files[fname] = e.target.result;
-                                    f_names.push(fname);
-                                    console.log(fname);
-                                    console.log(files[fname]);
-				    if(FS.findObject(fname)) FS.unlink(fname);
-                                    FS.createDataFile("/",fname,files[fname],true,true,true);
+                                    files[theFile.name] = e.target.result;
+                                    f_names.push(theFile.name);
+                                    console.log(theFile.name);
+                                    console.log(files[theFile.name]);
+				    if(FS.findObject(theFile.name)) FS.unlink(theFile.name);
+                                    FS.createDataFile("/",theFile.name,files[theFile.name],true,true,true);
                                 }
 
                             };
-                            reader.readAsText(f);
+                        })(f);
+                            
+                            
 			    
 			  }
 			}
@@ -106,5 +112,7 @@ set terminal svg
 				var blob = new Blob([img], {type : "image/svg+xml;charset:utf-8"});
 				saveAs(blob,"plot.svg");
 			});
+
 		</script>
 </html>
+
