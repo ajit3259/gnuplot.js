@@ -4,6 +4,8 @@ Port of gnuplot to javaScript using Emscripten
 
 gnuplot is a command-line program that can generate two- and three-dimensional plots of functions, data, and data fits. The program runs on all major computers and operating systems.
 
+# Demo
+https://ajit3259.github.io/gnuplot.js/
 
 ## Getting Started
 
