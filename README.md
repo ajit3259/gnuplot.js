@@ -47,8 +47,8 @@ emcc -s WASM=0 -O2 -s FORCE_FILESYSTEM=1 -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["in
 
 ## Contributing
 
+<a href="https://github.com/ajit3259/"><b>Ajit Kumar</b></a><br>
 <a href="https://github.com/YasasviPeruvemba/"><b>Yasasvi Peruvemba</b></a>
-<a href="https://github.com/ajit3259/"><b>Ajit Kumar</b></a>
 
 ## Authors
 
